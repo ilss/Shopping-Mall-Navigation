@@ -645,60 +645,37 @@ IndoorMapLoader.prototype.loadAjaxJSON = function ( context, url, callback, call
             if ( xhr.status === 200 || xhr.status === 0 ) {
                 
                 if ( xhr.responseText ) {
-                    
                     var json = JSON.parse( xhr.responseText );
-                    
                     var result = context.parse( json );
                     callback( result );
-                    
                 } else {
-                    
                     console.error( 'IndoorMapLoader: "' + url + '" seems to be unreachable or the file is empty.' );
-                    
                 }
-                
                 // in context of more complex asset initialization
                 // do not block on single failed file
                 // maybe should go even one more level up
-                
                 context.onLoadComplete();
-                
             } else {
-                
                 console.error( 'IndoorMapLoader: Couldn\'t load "' + url + '" (' + xhr.status + ')' );
-                
             }
-            
         } else if ( xhr.readyState === xhr.LOADING ) {
-            
             if ( callbackProgress ) {
-                
                 if ( length === 0 ) {
-                    
                     length = xhr.getResponseHeader( 'Content-Length' );
-                    
                 }
-                
                 callbackProgress( { total: length, loaded: xhr.responseText.length } );
-                
             }
             
         } else if ( xhr.readyState === xhr.HEADERS_RECEIVED ) {
-            
             if ( callbackProgress !== undefined ) {
-                
                 length = xhr.getResponseHeader( 'Content-Length' );
-                
             }
-            
         }
-        
     };
     
     xhr.open( 'GET', url, true );
     xhr.withCredentials = this.withCredentials;
     xhr.send( null );
-    
 };
 
 IndoorMapLoader.prototype.parse = function ( json ) {
@@ -707,15 +684,13 @@ IndoorMapLoader.prototype.parse = function ( json ) {
 
 //-----------------------------the Parser class ---------------------------------------
 function ParseModel( json, is3d, theme ) {
-    
     var mall = new Mall();
-    
     function parse() {
         
         mall.jsonData = json;
         mall.is3d = is3d;
         
-        if ( theme == undefined ) {
+        if ( theme === undefined ) {
             if ( is3d ) {
                 theme = default3dTheme;
             } else {
@@ -758,7 +733,8 @@ function ParseModel( json, is3d, theme ) {
             }
             
             //funcArea geometry
-            for ( var j = 0; j < floor.FuncAreas.length; j++ ) {
+            const _len = floor.FuncAreas.length;
+            for ( var j = 0; j < _len; j++ ) {
                 
                 var funcArea = floor.FuncAreas[ j ];
                 funcArea.rect = IDM.GeomUtil.getBoundingRect( funcArea.Outline[ 0 ][ 0 ] );
@@ -766,7 +742,7 @@ function ParseModel( json, is3d, theme ) {
                 if ( is3d ) {
                     points = parsePoints( funcArea.Outline[ 0 ][ 0 ] );
                     shape = new THREE.Shape( points );
-                    
+                    console.log(funcArea);
                     var center = funcArea.Center;
                     floorObj.points.push( {
                         name: funcArea.Name,
